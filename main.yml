@@ -1,0 +1,26 @@
+- name: DNS
+  hosts: all
+  sudo: true
+  tasks:
+  - name: Install KnotDNS
+    apt: name=knot state=latest
+  handlers:
+  - name: restart service
+    service: name=knot state=restarted
+  - name: reload service
+    service: name=knot state=reloaded
+  tasks:
+  - name: Paste master config
+    when: inventory_hostname in groups.master
+    template: src=templates/master.conf dest=/etc/knot/knot.conf
+    notify: restart service
+  - name: Paste slave config
+    when: inventory_hostname in groups.slave
+    template: src=templates/slave.conf dest=/etc/knot/knot.conf
+    notify: restart service
+  - name: Clone zones repository
+    when: inventory_hostname in groups.master
+    git: repo=https://github.com/pdostal/server-zones.git dest=/etc/knot/zones
+    notify: reload service
+  - name: Set permissions for zones/ folder
+    file: state=directory path=/etc/knot/zones/ owner=knot group=knot mode=0700
