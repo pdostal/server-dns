@@ -1,15 +1,14 @@
 - name: DNS
   hosts: all
   sudo: true
-  tasks:
-  - name: Install KnotDNS
-    apt: name=knot state=latest
   handlers:
   - name: restart service
     service: name=knot state=restarted
   - name: reload service
     service: name=knot state=reloaded
   tasks:
+  - name: Install KnotDNS
+    apt: name=knot,knot-host,knot-dnsutils state=latest
   - name: Paste master config
     when: inventory_hostname in groups.master
     template: src=templates/master.conf dest=/etc/knot/knot.conf
