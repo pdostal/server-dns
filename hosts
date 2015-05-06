@@ -1,5 +1,6 @@
 [master]
-vps
+rhubarb
 
 [slave]
-shark
+cucumber
+sorrel
