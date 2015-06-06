@@ -2,5 +2,6 @@
   hosts: all
   sudo: true
   roles:
+  - { role: recursive, tags: recursive, when: ansible_hostname in groups.recursive }
   - { role: master, tags: master, when: ansible_hostname in groups.master }
   - { role: slave, tags: slave, when: ansible_hostname in groups.slave }

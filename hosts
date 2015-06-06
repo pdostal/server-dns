@@ -8,3 +8,6 @@ rhubarb
 [slave]
 cucumber
 sorrel
+
+[recursive]
+sorrel

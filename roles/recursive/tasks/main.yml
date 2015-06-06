@@ -1,0 +1,8 @@
+- name: Install KnotDNS (Debian)
+  when: ansible_distribution == 'Debian'
+  apt: name=unbound state=latest
+  notify: restart service
+
+- name: Paste config
+  template: src=unbound.conf dest=/etc/unbound/unbound.conf
+  notify: restart service
