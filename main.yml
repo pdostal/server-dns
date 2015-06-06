@@ -1,47 +1,6 @@
 - name: DNS
   hosts: all
   sudo: true
-  handlers:
-  - name: restart service
-    service: name=knot state=restarted
-  - name: reload service
-    service: name=knot state=reloaded
-
-  tasks:
-  - set_fact:
-      knot_conf: /usr/local/etc/knot/
-    when: ansible_distribution == 'FreeBSD'
-  - set_fact:
-      knot_conf: /etc/knot/
-    when: ansible_system == 'Linux'
-
-  - name: Install KnotDNS (Debian)
-    when: ansible_distribution == 'Debian'
-    apt: name=knot,knot-host,knot-dnsutils state=latest force=yes
-  - name: Install KnotDNS (CentOS)
-    when: ansible_distribution == 'CentOS'
-    yum: name=knot state=latest
-  - name: Install KnotDNS (FreeBSD)
-    when: ansible_distribution == 'FreeBSD'
-    pkgng: name=knot state=present
-  - name: Enable KnotDNS (FreeBSD)
-    when: ansible_distribution == 'FreeBSD'
-    lineinfile: dest=/etc/rc.conf regexp=^knot_enable= line=knot_enable=YES
-  - name: Enable KnotDNS (FreeBSD)
-    when: ansible_distribution == 'FreeBSD'
-    lineinfile: dest=/etc/rc.conf regexp=^knot_config= line=knot_config=/usr/local/etc/knot/knot.conf
-
-  - name: Paste master config
-    when: inventory_hostname in groups.master
-    template: src=templates/master.conf dest={{ knot_conf }}knot.conf
-    notify: restart service
-  - name: Paste slave config
-    when: inventory_hostname in groups.slave
-    template: src=templates/slave.conf dest={{ knot_conf }}knot.conf
-    notify: restart service
-  - name: Clone zones repository
-    when: inventory_hostname in groups.master
-    git: repo=https://github.com/pdostal/server-zones.git dest={{ knot_conf }}zones
-    notify: reload service
-  - name: Set permissions for zones/ folder
-    file: state=directory path={{ knot_conf }}zones owner=knot group=knot mode=0700
+  roles:
+  - { role: master, tags: master, when: ansible_hostname in groups.master }
+  - { role: slave, tags: slave, when: ansible_hostname in groups.slave }
