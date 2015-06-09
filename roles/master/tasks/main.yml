@@ -21,12 +21,41 @@
   when: ansible_distribution == 'FreeBSD'
   lineinfile: dest=/etc/rc.conf regexp=^knot_config= line=knot_config=/usr/local/etc/knot/knot.conf
 
+- name: Creates zones/ directory
+  file: >
+    path={{ knot_conf }}zones
+    state=directory
+    owner=knot
+    group=knot
+    mode=0640
+  notify: restart service
+
+- name: Creates data/ directory
+  file: >
+    path={{ knot_conf }}data
+    state=directory
+    owner=knot
+    group=knot
+    mode=0640
+  notify: restart service
+
 - name: Paste master config
-  template: src=master.conf dest={{ knot_conf }}knot.conf
+  template: >
+    src=master.conf
+    dest={{ knot_conf }}knot.conf
+    owner=knot
+    group=knot
+    mode=0640
   notify: restart service
 
 - name: Clone zones repository
   git: repo=https://github.com/pdostal/server-zones.git dest={{ knot_conf }}data
   notify: reload service
 - name: Set permissions for data/ folder
-  file: state=directory path={{ knot_conf }}data owner=knot group=knot mode=0700
+  file: >
+    state=directory
+    path={{ knot_conf }}data
+    owner=knot
+    group=knot
+    mode=0640
+  notify: reload service
