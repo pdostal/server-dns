@@ -55,7 +55,8 @@
   file: >
     state=directory
     path={{ knot_conf }}data
+    recurse=yes
     owner=knot
     group=knot
-    mode=0640
+    mode=0774
   notify: reload service
