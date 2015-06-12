@@ -25,6 +25,7 @@
   file: >
     path={{ knot_conf }}zones
     state=directory
+    recurse=yes
     owner=knot
     group=knot
     mode=0770
@@ -34,9 +35,10 @@
   file: >
     path={{ knot_conf }}data
     state=directory
+    recurse=yes
     owner=knot
     group=knot
-    mode=0770
+    mode=0774
   notify: restart service
 
 - name: Paste slave config
