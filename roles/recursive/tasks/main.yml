@@ -1,3 +1,10 @@
+- set_fact:
+    unbound_conf: /usr/local/etc/unbound/
+  when: ansible_distribution == 'FreeBSD'
+- set_fact:
+    unbound_conf: /etc/unbound/
+  when: ansible_system == 'Linux'
+
 - name: Install Unbound (Debian)
   when: ansible_distribution == 'Debian'
   apt: name=unbound state=latest
@@ -12,5 +19,5 @@
   notify: restart service
 
 - name: Paste config
-  template: src=unbound.conf dest=/etc/unbound/unbound.conf
+  template: src=unbound.conf dest={{ unbound_conf }}unbound.conf
   notify: restart service
