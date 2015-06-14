@@ -1,6 +1,14 @@
-- name: Install KnotDNS (Debian)
+- name: Install Unbound (Debian)
   when: ansible_distribution == 'Debian'
   apt: name=unbound state=latest
+  notify: restart service
+- name: Install Unbound (FreeBSD)
+  when: ansible_distribution == 'FreeBSD'
+  pkgng: name=unbound state=present
+  notify: restart service
+- name: Enable Unbound (FreeBSD)
+  when: ansible_distribution == 'FreeBSD'
+  lineinfile: dest=/etc/rc.conf regexp=^unbound_enable= line=unbound_enable=YES
   notify: restart service
 
 - name: Paste config
