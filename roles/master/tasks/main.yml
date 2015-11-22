@@ -29,7 +29,7 @@
     owner=knot
     group=knot
     mode=0774
-  notify: restart service
+  notify: restart knot
 
 - name: Creates kasp/ directory
   file: >
@@ -39,13 +39,13 @@
     owner=knot
     group=knot
     mode=0770
-  notify: restart service
+  notify: restart knot
 
 - name: Clone zones repository
   git: >
     repo=https://github.com/pdostal/server-zones.git
     dest={{ knot_conf }}zones
-  notify: reload service
+  notify: reload knot
 - name: Set permissions for data/ folder
   file: >
     state=directory
@@ -54,7 +54,7 @@
     owner=knot
     group=knot
     mode=0774
-  notify: reload service
+  notify: reload knot
 
 - name: Paste master config
   template: >
@@ -63,4 +63,4 @@
     owner=knot
     group=knot
     mode=0640
-  notify: restart service
+  notify: restart knot

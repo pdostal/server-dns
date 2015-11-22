@@ -8,16 +8,16 @@
 - name: Install Unbound (Debian)
   when: ansible_distribution == 'Debian'
   apt: name=unbound state=latest
-  notify: restart service
+  notify: restart unbound
 - name: Install Unbound (FreeBSD)
   when: ansible_distribution == 'FreeBSD'
   pkgng: name=unbound state=present
-  notify: restart service
+  notify: restart unbound
 - name: Enable Unbound (FreeBSD)
   when: ansible_distribution == 'FreeBSD'
   lineinfile: dest=/etc/rc.conf regexp=^unbound_enable= line=unbound_enable=YES
-  notify: restart service
+  notify: restart unbound
 
 - name: Paste config
   template: src=unbound.conf dest={{ unbound_conf }}unbound.conf
-  notify: restart service
+  notify: restart unbound

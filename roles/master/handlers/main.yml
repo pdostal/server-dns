@@ -1,4 +1,4 @@
-- name: restart service
+- name: restart knot
   service: name=knot state=restarted
-- name: reload service
+- name: reload knot
   service: name=knot state=reloaded

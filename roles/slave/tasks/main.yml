@@ -29,7 +29,7 @@
     owner=knot
     group=knot
     mode=0774
-  notify: restart service
+  notify: restart knot
 
 - name: Creates zones/ directory
   file: >
@@ -39,7 +39,7 @@
     owner=knot
     group=knot
     mode=0770
-  notify: restart service
+  notify: restart knot
 
 - name: Paste slave config
   template: >
@@ -48,4 +48,4 @@
     owner=knot
     group=knot
     mode=0640
-  notify: restart service
+  notify: restart knot
