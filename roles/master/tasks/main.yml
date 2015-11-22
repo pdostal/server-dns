@@ -13,23 +13,13 @@
   yum: name=knot state=latest
 - name: Install KnotDNS (FreeBSD)
   when: ansible_distribution == 'FreeBSD'
-  pkgng: name=knot state=present
+  pkgng: name=knot2-2.0.1 state=present
 - name: Enable KnotDNS (FreeBSD)
   when: ansible_distribution == 'FreeBSD'
   lineinfile: dest=/etc/rc.conf regexp=^knot_enable= line=knot_enable=YES
 - name: Enable KnotDNS (FreeBSD)
   when: ansible_distribution == 'FreeBSD'
   lineinfile: dest=/etc/rc.conf regexp=^knot_config= line=knot_config=/usr/local/etc/knot/knot.conf
-
-- name: Creates zones/ directory
-  file: >
-    path={{ knot_conf }}zones
-    state=directory
-    recurse=yes
-    owner=knot
-    group=knot
-    mode=0770
-  notify: restart service
 
 - name: Creates data/ directory
   file: >
@@ -39,6 +29,16 @@
     owner=knot
     group=knot
     mode=0774
+  notify: restart service
+
+- name: Creates kasp/ directory
+  file: >
+    path={{ knot_conf }}data/kasp
+    state=directory
+    recurse=yes
+    owner=knot
+    group=knot
+    mode=0770
   notify: restart service
 
 - name: Clone zones repository
