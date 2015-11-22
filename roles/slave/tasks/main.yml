@@ -21,16 +21,6 @@
   when: ansible_distribution == 'FreeBSD'
   lineinfile: dest=/etc/rc.conf regexp=^knot_config= line=knot_config=/usr/local/etc/knot/knot.conf
 
-- name: Creates zones/ directory
-  file: >
-    path={{ knot_conf }}zones
-    state=directory
-    recurse=yes
-    owner=knot
-    group=knot
-    mode=0770
-  notify: restart service
-
 - name: Creates data/ directory
   file: >
     path={{ knot_conf }}data
@@ -39,6 +29,16 @@
     owner=knot
     group=knot
     mode=0774
+  notify: restart service
+
+- name: Creates zones/ directory
+  file: >
+    path={{ knot_conf }}zones
+    state=directory
+    recurse=yes
+    owner=knot
+    group=knot
+    mode=0770
   notify: restart service
 
 - name: Paste slave config
