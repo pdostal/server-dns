@@ -13,7 +13,7 @@
   yum: name=knot state=latest
 - name: Install KnotDNS (FreeBSD)
   when: ansible_distribution == 'FreeBSD'
-  pkgng: name=knot2-2.0.2 state=present
+  pkgng: name=knot2 state=present
 - name: Enable KnotDNS (FreeBSD)
   when: ansible_distribution == 'FreeBSD'
   lineinfile: dest=/etc/rc.conf regexp=^knot_enable= line=knot_enable=YES
