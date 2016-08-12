@@ -1,5 +1,7 @@
-stubs:
+secure:
 - pdostal.cz
+
+insecure:
 - 27.27.172.in-addr.arpa
 - 26.27.172.in-addr.arpa
 - 24.27.172.in-addr.arpa
