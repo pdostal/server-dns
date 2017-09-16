@@ -8,59 +8,49 @@
 - name: Install KnotDNS (Debian)
   when: ansible_distribution == 'Debian'
   apt: name=knot,knot-host,knot-dnsutils state=latest force=yes
+  notify: restart knot
 - name: Install KnotDNS (CentOS)
   when: ansible_distribution == 'CentOS'
   yum: name=knot state=latest
+  notify: restart knot
 - name: Install KnotDNS (FreeBSD)
   when: ansible_distribution == 'FreeBSD'
   pkgng: name=knot2 state=present
+  notify: restart knot
+  
 - name: Enable KnotDNS (FreeBSD)
   when: ansible_distribution == 'FreeBSD'
   lineinfile: dest=/etc/rc.conf regexp=^knot_enable= line=knot_enable=YES
 - name: Enable KnotDNS (FreeBSD)
   when: ansible_distribution == 'FreeBSD'
-  lineinfile: dest=/etc/rc.conf regexp=^knot_config= line=knot_config=/usr/local/etc/knot/knot.conf
+  lineinfile: >
+    dest=/etc/rc.conf
+    regexp=^knot_config=
+    line=knot_config=/usr/local/etc/knot/knot.conf
 
 - name: Creates data/ directory
-  file: >
-    path={{ knot_conf }}data
-    state=directory
-    recurse=yes
-    owner=knot
-    group=knot
-    mode=0774
+  file: state=directory path={{ knot_conf }}data
   notify: restart knot
-
 - name: Creates kasp/ directory
-  file: >
-    path={{ knot_conf }}data/kasp
-    state=directory
-    recurse=yes
-    owner=knot
-    group=knot
-    mode=0770
-  notify: restart knot
+  file: state=directory path={{ knot_conf }}data/kasp
 
 - name: Clone zones repository
   git: >
     repo=https://github.com/pdostal/server-zones.git
     dest={{ knot_conf }}zones
+    force=yes
   notify: reload knot
-- name: Set permissions for data/ folder
+
+- name: Paste master config
+  template: src=master.conf dest={{ knot_conf }}knot.conf
+  notify: restart knot
+
+- name: Set permissions
   file: >
     state=directory
-    path={{ knot_conf }}zones
+    path={{ knot_conf }}
     recurse=yes
     owner=knot
     group=knot
     mode=0774
   notify: reload knot
-
-- name: Paste master config
-  template: >
-    src=master.conf
-    dest={{ knot_conf }}knot.conf
-    owner=knot
-    group=knot
-    mode=0640
-  notify: restart knot

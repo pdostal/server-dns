@@ -8,12 +8,16 @@
 - name: Install KnotDNS (Debian)
   when: ansible_distribution == 'Debian'
   apt: name=knot,knot-host,knot-dnsutils state=latest force=yes
+  notify: restart knot
 - name: Install KnotDNS (CentOS)
   when: ansible_distribution == 'CentOS'
   yum: name=knot state=latest
+  notify: restart knot
 - name: Install KnotDNS (FreeBSD)
   when: ansible_distribution == 'FreeBSD'
   pkgng: name=knot state=present
+  notify: restart knot
+  
 - name: Enable KnotDNS (FreeBSD)
   when: ansible_distribution == 'FreeBSD'
   lineinfile: dest=/etc/rc.conf regexp=^knot_enable= line=knot_enable=YES
@@ -22,30 +26,23 @@
   lineinfile: dest=/etc/rc.conf regexp=^knot_config= line=knot_config=/usr/local/etc/knot/knot.conf
 
 - name: Creates data/ directory
+  file: state=directory path={{ knot_conf }}data
+  notify: restart knot
+
+- name: Creates zones/ directory
+  file: state=directory path={{ knot_conf }}zones
+  notify: restart knot
+
+- name: Paste slave config
+  template: src=slave.conf dest={{ knot_conf }}knot.conf
+  notify: restart knot
+
+- name: Set permissions
   file: >
-    path={{ knot_conf }}data
     state=directory
+    path={{ knot_conf }}
     recurse=yes
     owner=knot
     group=knot
     mode=0774
-  notify: restart knot
-
-- name: Creates zones/ directory
-  file: >
-    path={{ knot_conf }}zones
-    state=directory
-    recurse=yes
-    owner=knot
-    group=knot
-    mode=0770
-  notify: restart knot
-
-- name: Paste slave config
-  template: >
-    src=slave.conf
-    dest={{ knot_conf }}knot.conf
-    owner=knot
-    group=knot
-    mode=0640
-  notify: restart knot
+  notify: reload knot

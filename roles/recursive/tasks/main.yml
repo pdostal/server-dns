@@ -7,12 +7,18 @@
 
 - name: Install Unbound (Debian)
   when: ansible_distribution == 'Debian'
-  apt: name=unbound state=latest
+  apt: name={{ item }} state=latest
+  with_items:
+  - unbound
+  - unbound-anchor
+  - knot-dnsutils
+  - knot-host
   notify: restart unbound
 - name: Install Unbound (FreeBSD)
   when: ansible_distribution == 'FreeBSD'
   pkgng: name=unbound state=present
   notify: restart unbound
+
 - name: Enable Unbound (FreeBSD)
   when: ansible_distribution == 'FreeBSD'
   lineinfile: dest=/etc/rc.conf regexp=^unbound_enable= line=unbound_enable=YES
@@ -21,5 +27,3 @@
 - name: Paste config
   template: src=unbound.conf dest={{ unbound_conf }}unbound.conf
   notify: restart unbound
-- name: Paste localdomain
-  template: src=localdomain.conf dest={{ unbound_conf }}localdomain.conf

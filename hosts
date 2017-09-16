@@ -1,15 +1,12 @@
-cucumber  ipv4="46.101.158.52"  ipv6="2001:470:1f0a:6e8::2"
-grape  ipv4="159.203.139.122"  ipv6="2604:a880:800:10::a6:9001"
+huis  ipv4="37.205.8.96"     ipv6="2a01:430:17:1::ffff:1142"
+dump  ipv4="93.104.210.198"  ipv6="2a02:c205:2010:7573::1"
+uzel  ipv4="45.76.91.55"     ipv6="2001:470:1f0a:6e8::2"
 
 [recursive]
-cucumber
-
-[authoritative]
-cucumber
-grape
+uzel
 
 [master]
-grape
+huis
 
 [slave]
-cucumber
+dump
